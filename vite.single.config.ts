@@ -24,7 +24,11 @@ export default defineConfig({
     singleFile({
       publicDir: 'assets',
       // Design-time metadata, nothing loads it at runtime.
-      exclude: ['/sprites_metadata.json']
+      // og-cover.jpg is the link-preview image: it must stay an absolute URL in the
+      // meta tags (a data: URI is useless to a scraper), so it is never inlined.
+      // cover.jpg is the full-size master the preview image is cut from — 2 MB the
+      // self-contained build has no use for.
+      exclude: ['/sprites_metadata.json', '/og-cover.jpg', '/cover.jpg']
     })
   ]
 });

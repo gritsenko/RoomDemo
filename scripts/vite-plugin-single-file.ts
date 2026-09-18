@@ -107,10 +107,11 @@ export function singleFile(options: SingleFileOptions = {}): Plugin {
 
       // Rewrite references inside the HTML: "/fonts/pixel.ttf" plus the "./fonts/…"
       // and "fonts/…" forms Vite rewrites them to under base './'.
+      // The reference must open right after a quote or paren, so that a bare "cover.jpg"
+      // cannot match the tail of an unrelated absolute URL (…/RoomDemo/og-cover.jpg).
       for (const [key, uri] of Object.entries(assetMap)) {
-        for (const form of ['.' + key, key, key.slice(1)]) {
-          html = html.split(form).join(uri);
-        }
+        const name = key.slice(1).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        html = html.replace(new RegExp(`(["'(])(?:\\.?/)?${name}`, 'g'), (_match, open: string) => open + uri);
       }
 
       // A preload of an already inlined data: URI only earns a console warning.
