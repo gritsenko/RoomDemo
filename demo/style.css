@@ -1,0 +1,495 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap');
+
+@font-face {
+  font-family: 'Pixel';
+  src: url('../assets/fonts/pixel.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg-color: #08090c;
+  --hud-blue: #162432;
+  --cyan-glow: #2cdbf0;
+  --amber-glow: #f09235;
+  --red-accent: #e63946;
+  --border-metal: #2e4358;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: #c0d8e8;
+  font-family: 'Pixel', 'Share Tech Mono', monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+/* Header bar */
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: rgba(12, 16, 22, 0.95);
+  border-bottom: 1px solid var(--border-metal);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 1000;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.top-nav .brand {
+  color: var(--cyan-glow);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.top-nav .controls-hint {
+  color: #7b93a8;
+}
+
+.top-nav .btn-group {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-cyber {
+  background: #152230;
+  color: var(--cyan-glow);
+  border: 1px solid #2e5572;
+  padding: 6px 14px;
+  font-family: 'Pixel', 'Share Tech Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+
+.btn-cyber:hover, .btn-cyber.active {
+  background: var(--cyan-glow);
+  color: #06111a;
+  box-shadow: 0 0 10px rgba(44, 219, 240, 0.5);
+}
+
+/* Main Container (1920x1080 Aspect Ratio Canvas Container) */
+.viewport-wrapper {
+  position: relative;
+  width: 100vw;
+  height: calc(100vw * 1080 / 1920);
+  max-width: 1280px;
+  max-height: 720px;
+  margin-top: 54px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(22, 36, 50, 0.4);
+  border: 1px solid #1a2838;
+  background: #020305;
+  overflow: hidden;
+}
+
+/* 1920x1080 Coordinate Plane */
+.stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: top left;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Environment Layering */
+.room-container {
+  position: absolute;
+  top: 365px;
+  left: 575px;
+  width: 700px;
+  height: 340px;
+}
+
+.room-bg {
+  position: absolute;
+  top: 20px;
+  left: 80px;
+  width: 540px;
+  height: 210px;
+  background-image: url('../assets/environment/room_bg_empty.png');
+  background-size: cover;
+  image-rendering: pixelated;
+  z-index: 10;
+}
+
+.room-pipes {
+  position: absolute;
+  top: 275px;
+  left: 245px;
+  width: 402px;
+  height: 55px;
+  background-image: url('../assets/environment/room_pipes.png');
+  background-size: cover;
+  image-rendering: pixelated;
+  z-index: 15;
+}
+
+.prop {
+  position: absolute;
+  image-rendering: pixelated;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.prop:hover {
+  filter: drop-shadow(0 0 6px rgba(44, 219, 240, 0.8));
+}
+
+.prop-door {
+  top: 30px;
+  left: 95px;
+  width: 112px;
+  height: 187px;
+  background-image: url('../assets/environment/door_07.png');
+  background-size: cover;
+  z-index: 20;
+}
+
+.prop-door.open {
+  background-image: url('../assets/environment/door_07_open.png');
+}
+
+.prop-fridge {
+  top: 30px;
+  left: 293px;
+  width: 107px;
+  height: 187px;
+  background-image: url('../assets/environment/cryo_fridge.png');
+  background-size: cover;
+  z-index: 22;
+}
+
+.prop-fridge.open {
+  background-image: url('../assets/environment/cryo_fridge_open.png');
+}
+
+.prop-shelves {
+  top: 30px;
+  left: 400px;
+  width: 200px;
+  height: 70px;
+  background-image: url('../assets/environment/shelves_upper.png');
+  background-size: cover;
+  z-index: 21;
+}
+
+.prop-bed {
+  top: 95px;
+  left: 400px;
+  width: 200px;
+  height: 122px;
+  background-image: url('../assets/environment/bed_module.png');
+  background-size: cover;
+  z-index: 24;
+}
+
+.room-hull {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 700px;
+  height: 280px;
+  background-image: url('../assets/environment/room_frame_exterior.png');
+  background-size: cover;
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* Character */
+.hero {
+  position: absolute;
+  top: 422px;
+  left: 800px;
+  width: 65px;
+  height: 149px;
+  background-image: url('../assets/character/hero_standing.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  z-index: 35;
+  transition: transform 0.1s;
+}
+
+.hero.walking {
+  animation: heroWalk 0.6s steps(1) infinite;
+}
+
+.hero.facing-left {
+  transform: scaleX(-1);
+}
+
+@keyframes heroWalk {
+  0%   { background-image: url('../assets/character/hero_walk_1.png'); }
+  25%  { background-image: url('../assets/character/hero_walk_2.png'); }
+  50%  { background-image: url('../assets/character/hero_walk_3.png'); }
+  75%  { background-image: url('../assets/character/hero_walk_4.png'); }
+}
+
+/* Interactive Object Highlight Indicator */
+.inspect-tooltip {
+  position: absolute;
+  padding: 4px 8px;
+  background: rgba(10, 20, 30, 0.9);
+  border: 1px solid var(--cyan-glow);
+  color: var(--cyan-glow);
+  font-size: 14px;
+  pointer-events: none;
+  z-index: 80;
+  border-radius: 2px;
+  display: none;
+  transform: translate(-50%, -100%);
+  margin-top: -10px;
+  white-space: nowrap;
+}
+
+/* Dialogue Box */
+.dialogue-container {
+  position: absolute;
+  bottom: 230px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1200px;
+  min-height: 70px;
+  background: rgba(14, 18, 24, 0.92);
+  border: 2px solid #2d4860;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(44, 219, 240, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 30px;
+  z-index: 95;
+  border-radius: 4px;
+}
+
+.dialogue-text {
+  font-family: 'Pixel', 'Share Tech Mono', monospace;
+  font-size: 24px;
+  color: #db9c7a;
+  letter-spacing: 1.2px;
+  text-shadow: 0 0 8px rgba(219, 156, 122, 0.4);
+  text-align: center;
+}
+
+/* Bottom HUD Layer */
+.hud-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 1920px;
+  height: 255px;
+  background-image: url('../assets/ui/hud_full_bar.png');
+  background-size: cover;
+  image-rendering: pixelated;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+/* Interactive hotspots on HUD */
+.hud-portrait-zone {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 240px;
+  height: 255px;
+  cursor: pointer;
+}
+
+.hud-dpad-zone {
+  position: absolute;
+  bottom: 70px;
+  left: 865px;
+  width: 170px;
+  height: 150px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 8px;
+}
+
+.dpad-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.dpad-btn:hover {
+  filter: drop-shadow(0 0 8px rgba(240, 146, 53, 0.9));
+}
+
+.hud-slots-zone {
+  position: absolute;
+  bottom: 80px;
+  left: 1225px;
+  width: 320px;
+  height: 120px;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot {
+  width: 86px;
+  height: 106px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.slot:hover, .slot.active {
+  border-color: var(--cyan-glow);
+  box-shadow: 0 0 12px rgba(44, 219, 240, 0.6);
+  background: rgba(44, 219, 240, 0.1);
+}
+
+.slot img {
+  width: 54px;
+  height: 54px;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.hud-backpack-zone {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 240px;
+  height: 255px;
+  cursor: pointer;
+}
+
+.hud-backpack-zone:hover {
+  filter: drop-shadow(0 0 10px rgba(44, 219, 240, 0.8));
+}
+
+/* Sprite Viewer Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(4, 8, 14, 0.92);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-card {
+  width: 90%;
+  max-width: 1000px;
+  max-height: 85vh;
+  background: #0f1620;
+  border: 1px solid var(--border-metal);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.modal-header {
+  height: 50px;
+  border-bottom: 1px solid var(--border-metal);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: #141f2e;
+}
+
+.modal-header h3 {
+  color: var(--cyan-glow);
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.sprite-card {
+  background: #080d14;
+  border: 1px solid #1c2e40;
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s;
+}
+
+.sprite-card:hover {
+  border-color: var(--cyan-glow);
+  box-shadow: 0 0 15px rgba(44, 219, 240, 0.2);
+}
+
+.sprite-preview {
+  width: 100%;
+  height: 140px;
+  background: #030508 url('data:image/svg+xml;utf8,<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10" fill="%230b1016"/><rect x="10" y="10" width="10" height="10" fill="%230b1016"/><rect x="10" width="10" height="10" fill="%23070a0e"/><rect y="10" width="10" height="10" fill="%23070a0e"/></svg>');
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.sprite-preview img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.sprite-name {
+  font-size: 13px;
+  color: #c5dbee;
+  font-weight: bold;
+}
+
+.sprite-meta {
+  font-size: 11px;
+  color: #698299;
+}

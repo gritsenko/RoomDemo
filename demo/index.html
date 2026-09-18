@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyberpunk Room 07 — Sprite Prototype Demo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation / Controls Bar -->
+  <header class="top-nav">
+    <div class="brand">
+      <span style="color: #2cdbf0;">MODULE 07</span> // ИНТЕРАКТИВНЫЙ ПРОТОТИП СПРАЙТОВ
+    </div>
+    <div class="controls-hint">
+      [A / D] или [← / →] — Перемещение | [Клик мышью] — Взаимодействие с объектами
+    </div>
+    <div class="btn-group">
+      <button id="galleryBtn" class="btn-cyber">ПРОСМОТР СПРАЙТОВ</button>
+    </div>
+  </header>
+
+  <!-- 1920x1080 Scaled Stage Viewport -->
+  <main class="viewport-wrapper" id="viewportWrapper">
+    <div class="stage" id="stage">
+      
+      <!-- Living Module (Room) -->
+      <div class="room-container">
+        <!-- 1. Background Empty Room Walls & Grating (Clean layer) -->
+        <div class="room-bg" id="roomBg" title="Пол отсека (клик для перемещения)"></div>
+
+        <!-- 2. Lower Exterior Pipes -->
+        <div class="room-pipes"></div>
+
+        <!-- 3. Interactive Props -->
+        <div class="prop prop-door" id="propDoor" title="Гермодверь Отсека 07 (клик для открытия/закрытия)"></div>
+        <div class="prop prop-fridge" id="propFridge" title="Криокапсула / Холодильник (клик для открытия)"></div>
+        <div class="prop prop-shelves" id="propShelves" title="Настенные антресоли (клик для осмотра)"></div>
+        <div class="prop prop-bed" id="propBed" title="Спальный модуль (клик для осмотра)"></div>
+
+        <!-- 4. Outer Hull Armor Plate with Rust Textures (Front frame cutout) -->
+        <div class="room-hull"></div>
+      </div>
+
+      <!-- 5. Protagonist (Heroine) -->
+      <div class="hero" id="hero" title="Лилит (главная героиня)"></div>
+
+      <!-- 6. Dialogue Subtitle Banner -->
+      <div class="dialogue-container" id="dialogueContainer">
+        <div class="dialogue-text" id="dialogueText">Место где день начинается, и... заканчивается</div>
+      </div>
+
+      <!-- 7. Bottom Cyberpunk HUD / UI Bar -->
+      <div class="hud-bar">
+        <!-- Portrait Hotspot -->
+        <div class="hud-portrait-zone" id="hudPortrait" title="Портрет Лилит (клик для реплики)"></div>
+
+        <!-- Action D-Pad Hotspots -->
+        <div class="hud-dpad-zone">
+          <button class="dpad-btn" data-action="ОСМОТРЕТЬ" title="Действие: Осмотреть"></button>
+          <button class="dpad-btn" data-action="ВЗАИМОДЕЙСТВИЕ" title="Действие: Использовать / Взять"></button>
+          <button class="dpad-btn" data-action="ДИАЛОГ" title="Действие: Говорить"></button>
+          <button class="dpad-btn" data-action="ПЕРЕМЕЩЕНИЕ" title="Действие: Перемещение"></button>
+        </div>
+
+        <!-- Inventory Quick Slots -->
+        <div class="hud-slots-zone">
+          <div class="slot" data-name="Электронный ключ Отсека 07" title="Слот 1: Ключ-карта 07">
+            <img src="../assets/items/item_keycard.png" alt="Ключ-карта">
+          </div>
+          <div class="slot" data-name="Энергетический элемент питания" title="Слот 2: Энергоячейка">
+            <img src="../assets/items/item_energy_cell.png" alt="Энергоячейка">
+          </div>
+          <div class="slot" data-name="Стимулятор жизнеобеспечения" title="Слот 3: Стимпак">
+            <img src="../assets/items/item_stimpack.png" alt="Стимулятор">
+          </div>
+        </div>
+
+        <!-- Backpack Button Hotspot -->
+        <div class="hud-backpack-zone" id="hudBackpack" title="Рюкзак инвентаря (клик)"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modal: Sprite Viewer & Asset Explorer -->
+  <div class="modal-overlay" id="galleryModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>ЭКСПОРТИРОВАННЫЕ СПРАЙТЫ ПРОТОТИПА (ASSET PACK)</h3>
+        <button id="closeModal" class="btn-cyber">ЗАКРЫТЬ [✕]</button>
+      </div>
+      <div class="modal-body" id="galleryGrid">
+        <!-- Loaded dynamically from sprites_metadata.json -->
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

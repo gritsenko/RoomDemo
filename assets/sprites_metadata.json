@@ -1,0 +1,201 @@
+{
+  "canvas_size": {
+    "width": 1920,
+    "height": 1080
+  },
+  "sprites": {
+    "hero_standing": {
+      "file": "character/hero_standing.png",
+      "width": 60,
+      "height": 167,
+      "x": 800,
+      "y": 412,
+      "layer": 30,
+      "description": "Female protagonist standing idle (full sprite with complete boots)"
+    },
+    "hero_walk_sheet": {
+      "file": "character/hero_walk_sheet.png",
+      "frame_width": 60,
+      "frame_height": 167,
+      "frames_count": 4,
+      "fps": 6,
+      "description": "Walking cycle animation spritesheet"
+    },
+    "hero_portrait": {
+      "file": "character/hero_portrait.png",
+      "width": 240,
+      "height": 196,
+      "x": 0,
+      "y": 884,
+      "layer": 100,
+      "description": "High-detail pixel-art portrait of heroine for dialogue/HUD"
+    },
+    "room_frame_exterior": {
+      "file": "environment/room_frame_exterior.png",
+      "width": 700,
+      "height": 280,
+      "x": 575,
+      "y": 365,
+      "layer": 50,
+      "description": "Outer metal capsule hull with rust textures and inner window cutout"
+    },
+    "room_pipes": {
+      "file": "environment/room_pipes.png",
+      "width": 402,
+      "height": 55,
+      "x": 822,
+      "y": 642,
+      "layer": 45,
+      "description": "Industrial pipes under the capsule module"
+    },
+    "room_bg_empty": {
+      "file": "environment/room_bg_empty.png",
+      "width": 540,
+      "height": 210,
+      "x": 655,
+      "y": 385,
+      "layer": 10,
+      "description": "Clean interior background (wall panels, ceiling trim, floor) with no furniture/character"
+    },
+    "door_07": {
+      "file": "environment/door_07.png",
+      "width": 112,
+      "height": 187,
+      "x": 670,
+      "y": 395,
+      "layer": 20,
+      "interactive": true,
+      "name": "Гермодверь Отсека 07",
+      "description": "Sliding door with yellow status display and 07 designation"
+    },
+    "door_07_open": {
+      "file": "environment/door_07_open.png",
+      "width": 112,
+      "height": 187,
+      "x": 670,
+      "y": 395,
+      "layer": 20,
+      "description": "Open sliding door showing corridor"
+    },
+    "cryo_fridge": {
+      "file": "environment/cryo_fridge.png",
+      "width": 107,
+      "height": 187,
+      "x": 868,
+      "y": 395,
+      "layer": 22,
+      "interactive": true,
+      "name": "Крио-модуль / Холодильник",
+      "description": "Central vertical storage capsule/refrigerator unit"
+    },
+    "cryo_fridge_open": {
+      "file": "environment/cryo_fridge_open.png",
+      "width": 107,
+      "height": 187,
+      "x": 868,
+      "y": 395,
+      "layer": 22,
+      "description": "Open cryo-fridge with illuminated interior shelves and items"
+    },
+    "bed_module": {
+      "file": "environment/bed_module.png",
+      "width": 200,
+      "height": 122,
+      "x": 975,
+      "y": 460,
+      "layer": 24,
+      "interactive": true,
+      "name": "Жилой спальный блок",
+      "description": "Bunk bed with mattress and red quilt"
+    },
+    "shelves_upper": {
+      "file": "environment/shelves_upper.png",
+      "width": 200,
+      "height": 65,
+      "x": 975,
+      "y": 395,
+      "layer": 21,
+      "interactive": true,
+      "name": "Настенные антресоли",
+      "description": "Upper storage compartments above bed"
+    },
+    "stat_bars": {
+      "file": "ui/stat_bars.png",
+      "width": 625,
+      "height": 130,
+      "x": 230,
+      "y": 880,
+      "layer": 100,
+      "description": "Status bars: Health (48, red), Energy (98, cyan), Battery (96)"
+    },
+    "dpad_actions": {
+      "file": "ui/dpad_actions.png",
+      "width": 180,
+      "height": 141,
+      "x": 860,
+      "y": 864,
+      "layer": 100,
+      "description": "Circular action d-pad selector (Inspect, Use, Talk, Move)"
+    },
+    "inventory_slots": {
+      "file": "ui/inventory_slots.png",
+      "width": 330,
+      "height": 120,
+      "x": 1220,
+      "y": 875,
+      "layer": 100,
+      "description": "Three quick-access inventory item slots"
+    },
+    "backpack_icon": {
+      "file": "ui/backpack_icon.png",
+      "width": 250,
+      "height": 181,
+      "x": 1670,
+      "y": 899,
+      "layer": 100,
+      "description": "Right corner inventory backpack button"
+    },
+    "hud_full_bar": {
+      "file": "ui/hud_full_bar.png",
+      "width": 1920,
+      "height": 260,
+      "x": 0,
+      "y": 820,
+      "layer": 90,
+      "description": "Complete HUD bar background combining all lower UI modules"
+    },
+    "dialogue_box_sample": {
+      "file": "ui/dialogue_box_sample.png",
+      "width": 1272,
+      "height": 1,
+      "x": 324,
+      "y": 864,
+      "layer": 110,
+      "text": "Место где день начинается, и... заканчивается",
+      "description": "Dialogue banner with original reference subtitle text"
+    },
+    "dialogue_box_empty": {
+      "file": "ui/dialogue_box_empty.png",
+      "width": 1312,
+      "height": 17,
+      "x": 300,
+      "y": 790,
+      "layer": 105,
+      "description": "Empty stylized translucent dialogue box ready for custom game text"
+    }
+  },
+  "items": {
+    "item_keycard": {
+      "file": "items/item_keycard.png",
+      "name": "Электронный ключ Отсека 07"
+    },
+    "item_energy_cell": {
+      "file": "items/item_energy_cell.png",
+      "name": "Энергетический элемент питания"
+    },
+    "item_stimpack": {
+      "file": "items/item_stimpack.png",
+      "name": "Стимулятор жизнеобеспечения"
+    }
+  }
+}
