@@ -33,14 +33,18 @@ export interface GameAssets {
 
 /**
  * Single-file build inlines every public asset as a data: URI and publishes the
- * map on window.__INLINE_ASSETS__. In a normal build the map is absent and the
- * original path is used.
+ * map on window.__INLINE_ASSETS__. Otherwise the path is resolved against the
+ * build base, so the game also works when served from a subdirectory
+ * (e.g. gritsenko.biz/RoomDemo/).
  */
 function resolveAssetUrl(assetPath: string): string {
   const inlined = (globalThis as Record<string, any>).__INLINE_ASSETS__ as
     | Record<string, string>
     | undefined;
-  return inlined?.[assetPath] ?? assetPath;
+  if (inlined?.[assetPath]) return inlined[assetPath];
+
+  const base = import.meta.env.BASE_URL ?? '/';
+  return base.replace(/\/$/, '') + assetPath;
 }
 
 export class AssetLoader {
