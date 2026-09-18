@@ -3,6 +3,14 @@ import { GameAssets } from '../atlas/assetLoader';
 import { GameStateManager } from '../state/gameState';
 import { MatrixFinaleEffect } from '../effects/matrixFinale';
 import { Sound } from '../core/audio';
+import { centerTextVertically } from '../ui/textLayout';
+
+/** Floor line inside the capsule — the heroine's boots rest here. */
+const FLOOR_Y = 606;
+/** Idle spot in the alcove between the door and the cryo unit. */
+const HERO_HOME_X = 830;
+/** hero_standing.png is 176px tall and anchored at its top edge. */
+const HERO_TOP_Y = FLOOR_Y - 176;
 
 export interface ActionMenuItem {
   id: string;
@@ -32,13 +40,13 @@ export class RoomScene extends Container {
   private heroContainer: Container;
   private heroStandingSprite: Sprite;
   private heroWalkAnim: AnimatedSprite;
-  public heroX: number = 800;
-  public heroTargetX: number = 800;
+  public heroX: number = HERO_HOME_X;
+  public heroTargetX: number = HERO_HOME_X;
   public heroFacing: 'left' | 'right' = 'right';
   public isWalking: boolean = false;
   private heroSpeed: number = 4.5;
-  private readonly minX: number = 740;
-  private readonly maxX: number = 1040;
+  private readonly minX: number = 730;
+  private readonly maxX: number = 1140;
 
   // Floor waypoint reticle
   private waypointGraphics: Graphics;
@@ -79,7 +87,7 @@ export class RoomScene extends Container {
       const targetGlobalX = 575 + localPos.x;
       this.hideActionMenu();
       this.setHeroTargetX(targetGlobalX);
-      this.triggerFloorWaypoint(targetGlobalX, 580);
+      this.triggerFloorWaypoint(targetGlobalX, FLOOR_Y);
       Sound.playClick();
     });
 
@@ -136,9 +144,9 @@ export class RoomScene extends Container {
     this.waypointGraphics = new Graphics();
     this.addChild(this.waypointGraphics);
 
-    // 11. Hero setup (height 167px, top at y=413 so boots touch floor at y=580)
+    // 11. Hero setup (sprite is 66x176, so the top lands on FLOOR_Y - height)
     this.heroContainer = new Container();
-    this.heroContainer.position.set(this.heroX, 413);
+    this.heroContainer.position.set(this.heroX, HERO_TOP_Y);
 
     this.heroStandingSprite = new Sprite(this.assets.heroStanding);
     this.heroStandingSprite.anchor.set(0.5, 0);
@@ -199,15 +207,17 @@ export class RoomScene extends Container {
 
   private showTooltip(text: string, x: number, y: number) {
     this.tooltipText.text = text;
-    const w = this.tooltipText.width + 20;
-    const h = this.tooltipText.height + 10;
+    // Whole-pixel box and position: text width is fractional, and a box on a
+    // half pixel renders its 1px border as two blurry half-pixel lines.
+    const w = Math.ceil(this.tooltipText.width) + 20;
+    const h = Math.ceil(this.tooltipText.height) + 10;
     this.tooltipBg.clear();
     this.tooltipBg.beginFill(0x0c1622, 0.94);
-    this.tooltipBg.lineStyle(1.5, 0x2cdbf0);
+    this.tooltipBg.lineStyle(2, 0x2cdbf0);
     this.tooltipBg.drawRect(0, 0, w, h);
     this.tooltipBg.endFill();
 
-    this.tooltipContainer.position.set(x - w / 2, y - h - 10);
+    this.tooltipContainer.position.set(Math.round(x - w / 2), Math.round(y - h - 10));
     this.tooltipContainer.visible = true;
   }
 
@@ -275,31 +285,33 @@ export class RoomScene extends Container {
     bg.endFill();
     this.actionMenuContainer.addChild(bg);
 
-    // Header title (vertically centered)
+    // Everything in the header bar lines up on its own centre, not on menuH/2.
+    const headerCenterY = 4 + (headerH - 6) / 2;
+
     const headerText = new Text(`[ ${title.toUpperCase()} ]`, new TextStyle({
       fontFamily: ['Pixel', 'Share Tech Mono'],
       fontSize: 19,
       fill: '#f09235',
       letterSpacing: 1.2
     }));
-    headerText.anchor.set(0, 0.5);
-    headerText.position.set(20, Math.round(headerH / 2));
+    headerText.x = 20;
+    centerTextVertically(headerText, headerCenterY);
     this.actionMenuContainer.addChild(headerText);
 
-    // Subtitle indicator (vertically centered)
     const subHint = new Text('— ВЫБОР ДЕЙСТВИЯ —', new TextStyle({
       fontFamily: ['Pixel', 'Share Tech Mono'],
       fontSize: 12,
       fill: '#2cdbf0',
       letterSpacing: 1.0
     }));
-    subHint.anchor.set(1, 0.5);
-    subHint.position.set(menuW - 56, Math.round(headerH / 2));
+    subHint.anchor.x = 1;
+    subHint.x = menuW - 56;
+    centerTextVertically(subHint, headerCenterY);
     this.actionMenuContainer.addChild(subHint);
 
-    // Close button [✕] (32x32px, vertically centered in header bar)
+    // Close button (32x32px, centred in the header bar)
     const closeBtn = new Container();
-    closeBtn.position.set(menuW - 44, Math.round((headerH - 32) / 2));
+    closeBtn.position.set(menuW - 44, Math.round(headerCenterY - 16));
     closeBtn.eventMode = 'static';
     closeBtn.cursor = 'pointer';
 
@@ -310,13 +322,14 @@ export class RoomScene extends Container {
     closeBg.endFill();
     closeBtn.addChild(closeBg);
 
-    const closeTxt = new Text('✕', new TextStyle({
-      fontFamily: ['Pixel', 'Share Tech Mono'],
-      fontSize: 18,
-      fill: '#8da8be'
-    }));
-    closeTxt.anchor.set(0.5, 0.5);
-    closeTxt.position.set(16, 16);
+    const closeTxt = new Graphics();
+    const drawCross = (color: number) => {
+      closeTxt.clear();
+      closeTxt.lineStyle(2.5, color);
+      closeTxt.moveTo(11, 11); closeTxt.lineTo(21, 21);
+      closeTxt.moveTo(21, 11); closeTxt.lineTo(11, 21);
+    };
+    drawCross(0x8da8be);
     closeBtn.addChild(closeTxt);
 
     closeBtn.on('pointerover', () => {
@@ -325,7 +338,7 @@ export class RoomScene extends Container {
       closeBg.lineStyle(1, 0xff7b87);
       closeBg.drawRoundedRect(0, 0, 32, 32, 4);
       closeBg.endFill();
-      closeTxt.style.fill = '#ffffff';
+      drawCross(0xffffff);
     });
     closeBtn.on('pointerout', () => {
       closeBg.clear();
@@ -333,7 +346,7 @@ export class RoomScene extends Container {
       closeBg.lineStyle(1, 0x2cdbf0);
       closeBg.drawRoundedRect(0, 0, 32, 32, 4);
       closeBg.endFill();
-      closeTxt.style.fill = '#8da8be';
+      drawCross(0x8da8be);
     });
     closeBtn.on('pointerdown', (e) => {
       e.stopPropagation();
@@ -395,8 +408,8 @@ export class RoomScene extends Container {
         fill: item.isDanger ? '#ff858d' : (item.isPrimary ? '#6be5f6' : '#d6e6f5'),
         letterSpacing: 0.6
       }));
-      txt.anchor.set(0, 0.5);
-      txt.position.set(18, Math.round(itemH / 2));
+      txt.x = 18;
+      centerTextVertically(txt, itemH / 2);
       btn.addChild(txt);
 
       // Optional danger tag (vertically centered, right-aligned with safety margin)
@@ -408,8 +421,9 @@ export class RoomScene extends Container {
           fill: '#ff5c68',
           letterSpacing: 0.6
         }));
-        tag.anchor.set(1, 0.5);
-        tag.position.set(btnW - 18, Math.round(itemH / 2));
+        tag.anchor.x = 1;
+        tag.x = btnW - 18;
+        centerTextVertically(tag, itemH / 2);
         btn.addChild(tag);
 
         // Safety guard: guarantee label text never overlaps danger tag
@@ -766,12 +780,8 @@ export class RoomScene extends Container {
       icon: '💤',
       isPrimary: true,
       onSelect: () => {
-        this.stateManager.modifyEnergy(30);
-        Sound.playWakeup();
-        this.stateManager.setLog('Короткий сон восстановил +30 энергии. Но в кошмаре снова промелькнула цифра [07]...');
-        setTimeout(() => {
-          this.stateManager.rebootCycle();
-        }, 1200);
+        this.hideActionMenu();
+        this.stateManager.sleep();
       }
     });
 
@@ -855,7 +865,7 @@ export class RoomScene extends Container {
       }
     });
 
-    this.openActionMenu('Лилит', this.heroX, 413, items);
+    this.openActionMenu('Лилит', this.heroX, HERO_TOP_Y, items);
   }
 
   private setupStateSubscriptions() {
@@ -883,8 +893,8 @@ export class RoomScene extends Container {
 
       // Reposition hero to bed on cycle reboot
       if (changeType === 'cycleReboot') {
-        this.heroX = 980;
-        this.heroTargetX = 900;
+        this.heroX = 1020;
+        this.heroTargetX = 930;
         this.heroFacing = 'left';
         this.hideActionMenu();
       }

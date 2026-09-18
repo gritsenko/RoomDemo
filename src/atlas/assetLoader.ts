@@ -31,6 +31,18 @@ export interface GameAssets {
   itemStimpack: Texture;
 }
 
+/**
+ * Single-file build inlines every public asset as a data: URI and publishes the
+ * map on window.__INLINE_ASSETS__. In a normal build the map is absent and the
+ * original path is used.
+ */
+function resolveAssetUrl(assetPath: string): string {
+  const inlined = (globalThis as Record<string, any>).__INLINE_ASSETS__ as
+    | Record<string, string>
+    | undefined;
+  return inlined?.[assetPath] ?? assetPath;
+}
+
 export class AssetLoader {
   private static createFallbackTexture(
     renderer: IRenderer,
@@ -50,7 +62,7 @@ export class AssetLoader {
   public static async loadAll(renderer: IRenderer): Promise<GameAssets> {
     const tryLoad = async (path: string, fallbackW: number, fallbackH: number, color: number): Promise<Texture> => {
       try {
-        const tex = await Assets.load<Texture>(path);
+        const tex = await Assets.load<Texture>(resolveAssetUrl(path));
         return tex;
       } catch (err) {
         console.warn(`Asset failed to load: ${path}, using procedural fallback.`, err);

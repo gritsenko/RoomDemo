@@ -6,17 +6,17 @@
   "sprites": {
     "hero_standing": {
       "file": "character/hero_standing.png",
-      "width": 60,
-      "height": 167,
-      "x": 800,
-      "y": 412,
+      "width": 66,
+      "height": 176,
+      "x": 798,
+      "y": 430,
       "layer": 30,
       "description": "Female protagonist standing idle (full sprite with complete boots)"
     },
     "hero_walk_sheet": {
       "file": "character/hero_walk_sheet.png",
-      "frame_width": 60,
-      "frame_height": 167,
+      "frame_width": 66,
+      "frame_height": 176,
       "frames_count": 4,
       "fps": 6,
       "description": "Walking cycle animation spritesheet"
@@ -51,7 +51,7 @@
     "room_bg_empty": {
       "file": "environment/room_bg_empty.png",
       "width": 540,
-      "height": 210,
+      "height": 221,
       "x": 655,
       "y": 385,
       "layer": 10,

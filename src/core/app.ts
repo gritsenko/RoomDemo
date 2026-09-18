@@ -1,4 +1,4 @@
-import { Application, BaseTexture, SCALE_MODES, Container } from 'pixi.js';
+import { Application, BaseTexture, SCALE_MODES, Container, Rectangle } from 'pixi.js';
 
 // Enforce nearest-neighbor interpolation for crisp pixel art
 BaseTexture.defaultOptions.scaleMode = SCALE_MODES.NEAREST;
@@ -22,6 +22,11 @@ export class GameApp {
 
     // Root virtual container for pixel-perfect scaling
     this.stageContainer = new Container();
+    // Pin the filter source frame to the virtual resolution. Without this Pixi
+    // recomputes it from the container bounds every frame, so opening a popup or
+    // tooltip resizes/offsets the filter render texture and the whole scene gets
+    // resampled — borders change thickness and everything shifts by a pixel.
+    this.stageContainer.filterArea = new Rectangle(0, 0, this.width, this.height);
     this.app.stage.addChild(this.stageContainer);
 
     containerElement.appendChild(this.app.view as HTMLCanvasElement);

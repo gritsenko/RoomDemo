@@ -4,6 +4,7 @@ import { GameStateManager } from './state/gameState';
 import { RoomScene } from './scenes/roomScene';
 import { HudScene } from './scenes/hudScene';
 import { GlitchFilter } from './shaders/glitchFilter';
+import { FadeOverlay } from './ui/fadeOverlay';
 import { Sound } from './core/audio';
 
 async function bootstrap() {
@@ -53,12 +54,21 @@ async function bootstrap() {
     requestAnimationFrame(animGlitch);
   });
 
+  // Blackout callback — 5s fade with a caption, used for sleep and for death
+  const fadeOverlay = new FadeOverlay(gameApp.width, gameApp.height);
+  stateManager.registerFadeCallback((text, onBlackout) => {
+    fadeOverlay.play(text, onBlackout);
+  });
+
   // 5. Build Scenes
   const roomScene = new RoomScene(assets, stateManager);
   gameApp.stageContainer.addChild(roomScene);
 
   const hudScene = new HudScene(assets, stateManager);
   gameApp.stageContainer.addChild(hudScene);
+
+  // Overlay sits above the room and the HUD
+  gameApp.stageContainer.addChild(fadeOverlay);
 
   // 6. Setup Top Bar Telemetry & Controls
   setupTopBar(stateManager);
@@ -68,6 +78,7 @@ async function bootstrap() {
     glitchFilter.update(delta);
     roomScene.update(delta);
     hudScene.update(delta);
+    fadeOverlay.update(delta);
   });
 }
 

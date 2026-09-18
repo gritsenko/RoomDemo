@@ -1,14 +1,21 @@
 import { ActionType, CardItem, GameState } from '../types/game';
 import { INITIAL_CARDS } from '../types/items';
 import { Sound } from '../core/audio';
+import { FadeOverlayText } from '../ui/fadeOverlay';
 
 export type StateListener = (state: GameState, changeType: string) => void;
+
+/** Glitch filter burst right after the fatal hit. */
+const DEATH_GLITCH_MS = 700;
+/** Beat after the glitch so the cause of death can be read before the blackout. */
+const DEATH_READ_PAUSE_MS = 1900;
 
 export class GameStateManager {
   private state: GameState;
   private listeners: StateListener[] = [];
   public isRebooting: boolean = false;
   private onDeathGlitch?: (durationMs: number, onDone: () => void) => void;
+  private onFade?: (text: FadeOverlayText, onBlackout: () => void) => void;
 
   constructor() {
     this.state = this.createInitialState();
@@ -44,6 +51,20 @@ export class GameStateManager {
 
   public registerGlitchCallback(fn: (durationMs: number, onDone: () => void) => void) {
     this.onDeathGlitch = fn;
+  }
+
+  /** Registers the full-screen blackout; it calls back once the screen is dark. */
+  public registerFadeCallback(fn: (text: FadeOverlayText, onBlackout: () => void) => void) {
+    this.onFade = fn;
+  }
+
+  /** Runs the blackout if one is registered, otherwise just waits out the beat. */
+  private runFade(text: FadeOverlayText, onBlackout: () => void) {
+    if (this.onFade) {
+      this.onFade(text, onBlackout);
+    } else {
+      setTimeout(onBlackout, 1500);
+    }
   }
 
   public subscribe(listener: StateListener): () => void {
@@ -120,18 +141,47 @@ export class GameStateManager {
     this.setLog(`[ФАТАЛЬНАЯ ОШИБКА] ${cause}. СИСТЕМА ДЕСТАБИЛИЗИРОВАНА.`);
     Sound.playShock();
 
-    // Glitch filter activation
-    if (this.onDeathGlitch) {
-      this.onDeathGlitch(700, () => {
-        Sound.playGlitchFlatline(() => {
-          this.rebootCycle();
-        });
-      });
-    } else {
-      Sound.playGlitchFlatline(() => {
+    // Glitch filter, then the flatline plays into a 5s blackout
+    const fadeToReboot = () => {
+      Sound.playGlitchFlatline();
+      this.runFade({
+        title: 'ЛИЛИТ ПОГИБЛА',
+        subtitle: `ВОССТАНОВЛЕНИЕ ИЗ РЕЗЕРВНОЙ КОПИИ... ЦИКЛ #${this.state.iteration + 1}`,
+        color: '#e63946'
+      }, () => {
+        this.isRebooting = false;
         this.rebootCycle();
       });
+    };
+
+    if (this.onDeathGlitch) {
+      this.onDeathGlitch(DEATH_GLITCH_MS, () => {
+        setTimeout(fadeToReboot, DEATH_READ_PAUSE_MS);
+      });
+    } else {
+      setTimeout(fadeToReboot, DEATH_GLITCH_MS + DEATH_READ_PAUSE_MS);
     }
+  }
+
+  /**
+   * Lilith lies down: +30 energy, then the screen fades out for 5s while the
+   * cycle reboots behind the blackout.
+   */
+  public sleep() {
+    if (this.isRebooting) return;
+    this.isRebooting = true;
+
+    this.modifyEnergy(30);
+    this.setLog('Короткий сон восстановил +30 энергии. Но в кошмаре снова промелькнула цифра [07]...');
+
+    this.runFade({
+      title: 'ЛИЛИТ СПИТ...',
+      subtitle: 'ЦИКЛ СНА: ВОССТАНОВЛЕНИЕ ЭНЕРГИИ...',
+      color: '#2cdbf0'
+    }, () => {
+      this.isRebooting = false;
+      this.rebootCycle();
+    });
   }
 
   public rebootCycle() {
